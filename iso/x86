@@ -1,0 +1,5 @@
+.model small
+.stack
+.data
+Cadena1 DB 'Hola Mundo.$'
+.code 
