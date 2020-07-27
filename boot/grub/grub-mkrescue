@@ -1,0 +1,1 @@
+grub-mkrescue -o nextdivel.iso nextroot
