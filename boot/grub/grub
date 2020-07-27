@@ -1,0 +1,3 @@
+mkdir nextroot && cd nextroot
+
+mkdir -p boot/grub
