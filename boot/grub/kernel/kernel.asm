@@ -14,3 +14,6 @@ loop: hlt
 jmp loop
 .section ".bss"
 .comm stack,0x4000
+
+
+gcc -o START.ELF kernel.o NextKernel_Main.o -Tlink.ld -nostdlib -fPIC -ffreestanding -lgcc
