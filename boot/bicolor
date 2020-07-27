@@ -1,0 +1,140 @@
+Dosseg .Model small .Data
+
+Col1 DW 0 Col2 DW 1
+
+
+                                                                                                        MACROS ********************************
+
+Entrar Macro mov ah, 7 int 21H endm
+
+
+Modo MACRO VALOR
+        PUSH AX
+        XOR AH, AH
+        MOV AL, VALOR
+        INT 10H
+        POP AX
+
+ENDM
+
+Paleta MACRO VALOR
+
+       PUSH AX
+       PUSH BX
+       Mov AH, 0BH
+       MOV BL, VALOR
+       MOV BH, 01H
+       Int 10h
+       POP BX
+       POP AX
+
+ENDM
+
+
+Linea MACRO Columna, Color
+
+      LOCAL Volver
+      PUSH AX
+      PUSH BX
+
+PUSH CX MOV AX, 0B800H
+
+      MOV ES, AX
+
+MOV AH, Color MOV DI, Columna MOV CX, 100  ; OJO VER CUAL ES EL NUMERO DE FILAS Volver:
+
+     MOV ES: [DI], AH
+
+MOV ES: [DI+2000H], AH ADD DI, 80 LOOP Volver
+
+POP CX POP BX POP AX ENDM
+
+Linea1 MACRO Columna, Color
+
+      LOCAL Volver
+      PUSH AX
+      PUSH BX
+
+PUSH CX MOV AX, 0B800H
+
+      MOV ES, AX
+
+MOV AL, Color MOV DI, Columna MOV CX, 100  ; OJO VER CUAL ES EL NUMERO DE FILAS Volver:
+
+      MOV ES: [DI], AL
+
+MOV ES: [DI+2000H], AL ADD DI, 80 LOOP Volver
+
+POP CX POP BX POP AX ENDM
+
+
+BorrarPantalla MACRO LOCAL Borrar
+
+      PUSH AX
+      PUSH BX
+
+PUSH CX MOV AX, 0B800H MOV ES, AX MOV DI, 00H XOR AX, AX MOV CX, 2000H
+
+      REP STOSW
+
+POP CX POP BX POP AX
+
+ENDM
+
+.Code .386 Main proc near
+
+     MOV AX, @Data
+
+MOV DS, AX Modo 4  ; Modo Gráfico Paleta 2  ; Paleta Caliente MOV Col1, 39  ; Ubicamos la primera línea una posición antes del centro MOV Col2, 40  ; Ubicamos la primera línea una posición en el mismo centro
+
+Linea Col1, 00000010B  ; Pintamos las dos líneas, la primera con AH Linea1 Col2, 01000000B  ;y la otra con AL, para que den la sensación de que son una sola
+
+vuelvo: Entrar cmp al, 1BH  ;verifico que si la tecla que presiona el usuario es ESC je Salto  ;si es así termina la aplicación
+
+mov ah, 06H  ;este servicio lo utilizamos para leer una tecla mov dl, 0FFH Int 21H  ; leemos la tecla presionada
+
+JE vuelvo cmp AL, 4BH JE izquierda  ;Si presiona la flecha izquierda lo mandamos a
+
+cmp AL, 4DH                               ;mover las lineas hacia la izq
+
+JE derecha  ;Si presiona la flecha derecha lo jmp vuelvo  ; mandamos a mover las lineas hacia la der Int 21H STC
+
+Salto: jmp Salir
+
+            -----------***-----------***
+
+izquierda: BorrarPantalla  ;aquí borramos la ubicación de las dos lineas anteriores cmp Col1, 0  ;comparamos en caso de que la primera linea llegue al principio de la pantalla je asignar1 cmp Col2, 0  ;comparamos en caso de que la primera linea llegue al principio de la pantalla je asignar2 jmp colorear1  ;sino cumple con las anteriores asecciones pinta normal decreciendo en 1
+
+asignar1: mov Col1, 79  ;si la primera linea llego al inicio de la dec Col2  ;y la segunda toma la posición que tenia la primera Linea Col1, 00000010B pantalla pues debe pasar al final de la misma Linea1 Col2, 01000000B  ; pintamos con las nuevas posiciones jmp vuelvo  ;regreso a espera aque se presione una tecla
+
+asignar2: mov Col2, 79  ;si la segunda linea llego al inicio de la pantalla pues
+
+                                                                   ;debe pasar al final de la misma
+
+dec Col1  ;la primera continua moviendose a la izquierda Linea Col1, 00000010B Linea1 Col2, 01000000B  ;pintamos con las nuevas posiciones jmp vuelvo  ;regreso a espera aque se presione una tecla
+
+colorear1: dec Col1  ;este es el caso en el que las lineas solo se dec Col2  ;van moviendo hacia la izquierda Linea Col1, 00000010B Linea1 Col2, 01000000B jmp vuelvo
+
+            -----------***-----------***
+
+            -----------***-----------***
+
+derecha: BorrarPantalla  ;aquí borramos la ubicación de las dos lineas anteriores cmp Col1, 79  ;comparamos en caso de que la primera linea llegue al final de la pantalla je asignar3 cmp Col2, 79  ;comparamos en caso de que la primera linea llegue al final de la pantalla je asignar4 jmp colorear2  ;sino cumple con las anteriores asecciones pinta normal incrementando en 1
+
+asignar3: mov Col1,0  ;si la primera linea llego al final de la pantalla pues debe pasar al inicio de la misma inc Col2  ;y la segunda toma la posición que tenia la primera
+
+Linea Col1, 00000010B Linea1 Col2, 01000000B  ; pintamos con las nuevas posiciones jmp vuelvo  ;regreso a espera aque se presione una tecla
+
+asignar4: mov Col2, 0  ;si la segunda linea llego al final de la pantalla pues debe pasar al inicio de la misma inc Col1  ;la primera continua moviendose a la derecha
+
+Linea Col1, 00000010B Linea1 Col2, 01000000B  ;pintamos con las nuevas posiciones jmp vuelvo  ;regreso a espera aque se presione una tecla
+
+colorear2: inc Col1  ;este es el caso en el que las lineas solo se van moviendo hacia la derecha inc Col2 Linea Col1, 00000010B Linea1 Col2, 01000000B jmp vuelvo  ;regreso a espera aque se presione una tecla
+
+            -----------***-----------***
+
+Salir: MOV AX, 4C00H Int 21H
+
+Main endp
+
+End 
