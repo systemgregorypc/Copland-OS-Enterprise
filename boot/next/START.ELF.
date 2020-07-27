@@ -1,0 +1,1 @@
+gcc -o START.ELF kernel.o NextKernel_Main.o -Tlink.ld -nostdlib -fPIC -ffreestanding -lgcc
