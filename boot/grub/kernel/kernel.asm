@@ -1,5 +1,5 @@
 .text
-.globl Copland-OS-Enterprise
+.globl start
 start:
 jmp multiboot_entry
 .align 4
