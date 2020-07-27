@@ -1,0 +1,1 @@
+gcc -o NextKernel_Main.o -c NextKernel_Main.c -nostdlib -fPIC -ffreestanding
