@@ -1,0 +1,13 @@
+.386
+    .model small
+        .code
+
+            public main
+                main proc
+
+                    ; Ends program normally
+
+                    ret
+                main endp
+            end main
+ 
