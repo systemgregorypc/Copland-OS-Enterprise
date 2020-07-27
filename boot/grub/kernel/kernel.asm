@@ -9,7 +9,7 @@ multiboot_header:
 .long -(0x1BADB002+0x00000003)
 multiboot_entry:
 movl $(stack + 0x4000), %esp
-call Copland-OS-EnterpriseKernel_Main
+call NextKernel_Main
 loop: hlt
 jmp loop
 .section ".bss"
