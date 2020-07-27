@@ -1,0 +1,1 @@
+as -o kernel.o -c kernel.asm
