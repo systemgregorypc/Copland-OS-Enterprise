@@ -1,0 +1,3 @@
+mylabel: db 'Message here', 0
+foo: db 0
+mov byte al, [foo]
