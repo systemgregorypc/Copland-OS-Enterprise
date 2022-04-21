@@ -1,0 +1,8 @@
+mov bx, 1000h
+	mov ax, [bx]
+	cmp ax, 50
+	jge label
+	...
+
+label:
+	mov ax, 10
